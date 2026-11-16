@@ -8,485 +8,445 @@ from datetime import date
 # CONFIGURAÇÃO DA PÁGINA
 # ==========================================
 st.set_page_config(
-    page_title="Saúde da Operação | Monitoramento Operacional",
+    page_title="Dashboard v3.0.0 - Saúde da Operação",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ==========================================
-# ESTILIZAÇÃO CSS (TEMA DARK NAVY FIEL AO VÍDEO)
+# CSS CUSTOMIZADO (FIEL AO HTML DAS FOTOS)
 # ==========================================
 st.markdown("""
 <style>
-    /* Fundo principal e tipografia */
+    /* Fundo principal em gradiente Dark Navy */
     .stApp {
-        background: radial-gradient(circle at 50% 10%, #0d1b38 0%, #060b19 60%, #040711 100%);
+        background: radial-gradient(circle at 50% 0%, #10213f 0%, #091326 55%, #050b16 100%);
         color: #F8FAFC;
         font-family: 'Inter', 'Segoe UI', sans-serif;
     }
     .block-container {
         padding-top: 1.2rem !important;
-        padding-bottom: 2rem !important;
-        max-width: 98% !important;
+        padding-bottom: 2.5rem !important;
+        max-width: 97% !important;
     }
 
-    /* Barra lateral */
+    /* Barra Lateral Estreita com Logo CM */
     section[data-testid="stSidebar"] {
-        background-color: #050A18 !important;
-        border-right: 1px solid #162442 !important;
-        width: 90px !important;
+        background-color: #060C1A !important;
+        border-right: 1px solid #162647 !important;
+        width: 105px !important;
+        min-width: 105px !important;
+    }
+    .cm-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+        color: #FFFFFF;
+        font-weight: 800;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px auto;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.45);
     }
 
-    /* Cabeçalho Principal */
-    .top-badge {
-        color: #38BDF8;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 1.5px;
+    /* Cabeçalho Superior */
+    .top-tag {
+        color: #94A3B8;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 1.4px;
         text-transform: uppercase;
         margin-bottom: 2px;
     }
-    .main-title {
-        font-size: 2.1rem;
+    .page-title {
+        font-size: 2.05rem;
         font-weight: 800;
         color: #FFFFFF;
         margin: 0;
         line-height: 1.15;
     }
-    .main-subtitle {
+    .page-subtitle {
         color: #94A3B8;
-        font-size: 0.88rem;
+        font-size: 0.84rem;
         margin-top: 4px;
-        margin-bottom: 8px;
-    }
-    .breadcrumb {
-        display: inline-block;
-        background: #0D182E;
-        border: 1px solid #1E325C;
-        border-radius: 6px;
-        padding: 4px 12px;
-        font-size: 0.78rem;
-        color: #94A3B8;
-        margin-bottom: 14px;
-    }
-    .breadcrumb span {
-        color: #38BDF8;
-        font-weight: 600;
+        margin-bottom: 10px;
     }
 
-    /* Containers e Cards de KPI */
+    /* Breadcrumb e Status Online */
+    .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .breadcrumb-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: #94A3B8;
+    }
+    .bc-pill {
+        background: rgba(14, 165, 233, 0.18);
+        border: 1px solid rgba(56, 189, 248, 0.45);
+        color: #38BDF8;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 5px;
+    }
+    .bc-pill-sub {
+        background: rgba(148, 163, 184, 0.15);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        color: #E2E8F0;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 5px;
+    }
+    .status-pills {
+        display: flex;
+        gap: 10px;
+    }
+    .status-badge {
+        background: #0A1529;
+        border: 1px solid #1C315A;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.72rem;
+        color: #CBD5E1;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .dot-green {
+        width: 7px;
+        height: 7px;
+        background-color: #10B981;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 6px #10B981;
+    }
+
+    /* Cards de KPI */
     .kpi-card {
-        background: linear-gradient(145deg, #0D172B 0%, #091020 100%);
-        border: 1px solid #1C2E52;
+        background: linear-gradient(160deg, #0E1B33 0%, #091224 100%);
+        border: 1px solid #1D3561;
+        border-top: 2px solid #22D3EE;
         border-radius: 12px;
-        padding: 18px 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-        position: relative;
-        min-height: 118px;
+        padding: 16px 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+        min-height: 116px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
-    .kpi-card:hover {
-        border-color: #2B4C8C;
-    }
-    .kpi-header {
+    .kpi-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #94A3B8;
-        font-size: 0.72rem;
-        font-weight: 700;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: #CBD5E1;
+        letter-spacing: 0.6px;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
     }
-    .kpi-info-icon {
-        color: #475569;
+    .kpi-icon {
+        color: #64748B;
         font-size: 0.8rem;
-        cursor: help;
     }
-    .kpi-value {
-        font-size: 2.0rem;
+    .kpi-val {
+        font-size: 1.95rem;
         font-weight: 800;
         color: #FFFFFF;
         margin: 6px 0 4px 0;
-        letter-spacing: -0.5px;
     }
-    .kpi-sub {
-        font-size: 0.76rem;
-        color: #38BDF8;
-        font-weight: 500;
+    .kpi-foot {
+        font-size: 0.74rem;
+        font-weight: 600;
     }
 
-    /* Card de Visão Consolidada (Tela Inicial) */
-    .consolidated-banner {
-        background: linear-gradient(180deg, rgba(13, 23, 43, 0.75) 0%, rgba(9, 16, 32, 0.9) 100%);
-        border: 1px solid #1C2E52;
+    /* Banner Visão Consolidada (Home) */
+    .consolidated-box {
+        background: linear-gradient(180deg, rgba(14, 27, 51, 0.75) 0%, rgba(8, 16, 32, 0.9) 100%);
+        border: 1px solid #1B3159;
         border-radius: 14px;
-        padding: 70px 30px;
+        padding: 68px 24px;
         text-align: center;
-        margin-top: 24px;
-        margin-bottom: 24px;
+        margin-top: 20px;
     }
-    .consolidated-banner h2 {
+    .consolidated-box h2 {
         color: #FFFFFF;
-        font-size: 1.5rem;
+        font-size: 1.45rem;
         font-weight: 800;
         letter-spacing: 0.8px;
         margin-bottom: 8px;
     }
-    .consolidated-banner p {
+    .consolidated-box p {
         color: #94A3B8;
-        font-size: 0.95rem;
+        font-size: 0.90rem;
         margin: 0;
     }
 
     /* Títulos de Seção */
-    .section-title {
+    .sec-title {
         font-size: 1.05rem;
-        font-weight: 700;
-        color: #F1F5F9;
+        font-weight: 800;
+        color: #FFFFFF;
         margin: 22px 0 12px 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 
-    /* Estilização da Tabela HTML customizada (Top 100) */
-    .custom-table-container {
-        background: #0B1325;
-        border: 1px solid #1C2E52;
-        border-radius: 12px;
-        padding: 16px;
-        margin-top: 18px;
-        overflow-x: auto;
+    /* Cabeçalho de Container de Gráfico */
+    .chart-box-header {
+        background: #0C172C;
+        border: 1px solid #1C315A;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        padding: 14px 20px 6px 20px;
+        margin-top: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-    table.ops-table {
+    .chart-box-title {
+        font-size: 0.90rem;
+        font-weight: 700;
+        color: #F8FAFC;
+    }
+    .chart-tag {
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #34D399;
+        font-size: 0.62rem;
+        font-weight: 800;
+        padding: 3px 9px;
+        border-radius: 12px;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+    }
+
+    /* Ranking de Barras Horizontais Customizado (Fiel à Foto 4, 7 e 8) */
+    .rank-card {
+        background: #0B1528;
+        border: 1px solid #1C315A;
+        border-radius: 12px;
+        padding: 18px 20px;
+        height: 100%;
+    }
+    .rank-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+    }
+    .rank-title {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #FFFFFF;
+    }
+    .rank-sub {
+        font-size: 0.75rem;
+        color: #94A3B8;
+        margin-top: 2px;
+    }
+    .rank-row {
+        display: grid;
+        grid-template-columns: 28px 115px 1fr 78px;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 0;
+        font-size: 0.75rem;
+    }
+    .rank-pos {
+        color: #64748B;
+        font-weight: 700;
+    }
+    .rank-name {
+        color: #E2E8F0;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .rank-bar-bg {
+        background: rgba(30, 41, 59, 0.55);
+        height: 8px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .rank-bar-fill-cyan {
+        background: linear-gradient(90deg, #38BDF8 0%, #2DD4BF 100%);
+        height: 100%;
+        border-radius: 6px;
+    }
+    .rank-bar-fill-amber {
+        background: linear-gradient(90deg, #F59E0B 0%, #FEF08A 100%);
+        height: 100%;
+        border-radius: 6px;
+    }
+    .rank-val {
+        text-align: right;
+        color: #F8FAFC;
+        font-weight: 700;
+    }
+
+    /* Tabela Inferior (Amostra de Pendências Atual - Top 100) */
+    .table-card {
+        background: #0B1528;
+        border: 1px solid #1C315A;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-top: 20px;
+    }
+    table.pend-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.80rem;
-        color: #E2E8F0;
+        font-size: 0.78rem;
+        margin-top: 10px;
     }
-    table.ops-table th {
+    table.pend-table th {
         text-align: left;
         padding: 10px 12px;
-        color: #64748B;
-        font-size: 0.70rem;
+        color: #94A3B8;
+        font-size: 0.67rem;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.7px;
         border-bottom: 1px solid #1E293B;
     }
-    table.ops-table td {
-        padding: 9px 12px;
-        border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-    }
-    table.ops-table tr:hover {
-        background-color: rgba(56, 189, 248, 0.05);
-    }
-    .status-ok {
-        color: #34D399;
+    table.pend-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(30, 41, 59, 0.55);
+        color: #F1F5F9;
         font-weight: 600;
     }
-    .status-delay {
-        color: #FB7185;
-        font-weight: 600;
+    .status-pill-devolvida {
+        background: rgba(244, 63, 94, 0.16);
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        color: #FDA4AF;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: inline-block;
     }
 
-    /* Ajuste de inputs do Streamlit para o tema escuro */
+    /* Ajustes de Widgets Nativos Streamlit */
     div[data-baseweb="select"] > div,
     div[data-baseweb="input"] > div {
-        background-color: #070E1C !important;
-        border-color: #1E325C !important;
+        background-color: #081121 !important;
+        border-color: #1D3561 !important;
         color: #F8FAFC !important;
         border-radius: 8px !important;
+        font-size: 0.82rem !important;
     }
     label[data-testid="stWidgetLabel"] p {
-        font-size: 0.68rem !important;
-        font-weight: 700 !important;
-        color: #94A3B8 !important;
+        font-size: 0.66rem !important;
+        font-weight: 800 !important;
+        color: #CBD5E1 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.6px !important;
+        letter-spacing: 0.5px !important;
     }
-    /* Botões de abas (Radio horizontal transformado em Pílulas) */
+    /* Sub-abas Horizontais estilo Pílula Verde/Teal */
     div[role="radiogroup"] {
-        background: #091122;
-        padding: 6px;
+        background: #091326;
+        padding: 8px 10px;
         border-radius: 10px;
-        border: 1px solid #1A2B4C;
+        border: 1px solid #1B3159;
         gap: 6px;
         overflow-x: auto;
     }
     div[role="radiogroup"] label {
-        background: transparent;
-        border: 1px solid transparent;
-        padding: 6px 14px !important;
-        border-radius: 7px !important;
-        transition: all 0.2s;
+        background: #0D1B35 !important;
+        border: 1px solid #1E3663 !important;
+        padding: 5px 13px !important;
+        border-radius: 8px !important;
     }
     div[role="radiogroup"] label[data-checked="true"] {
-        background: #1D4ED8 !important;
-        border-color: #38BDF8 !important;
-        color: white !important;
+        background: linear-gradient(90deg, #0D9488 0%, #10B981 100%) !important;
+        border-color: #34D399 !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 
 # ==========================================
-# FUNÇÃO DE COMPONENTES VISUAIS
+# COMPONENTES AUXILIARES
 # ==========================================
-def render_kpi(title: str, value: str, subtitle: str, sub_color: str = "#38BDF8"):
+def render_kpi_card(title: str, value: str, footer: str, foot_color: str = "#10B981"):
     st.markdown(f"""
     <div class="kpi-card">
-        <div class="kpi-header">
+        <div class="kpi-top">
             <span>{title}</span>
-            <span class="kpi-info-icon" title="Indicador monitorado na janela selecionada">ⓘ</span>
+            <span class="kpi-icon">ⓘ</span>
         </div>
-        <div class="kpi-value">{value}</div>
-        <div class="kpi-sub" style="color: {sub_color};">{subtitle}</div>
+        <div class="kpi-val">{value}</div>
+        <div class="kpi-foot" style="color: {foot_color};">{footer}</div>
     </div>
     """, unsafe_allow_html=True)
 
 
-# ==========================================
-# SIMULAÇÃO DE DADOS (OU LEITURA DE CSV)
-# ==========================================
-@st.cache_data
-def get_simulated_data():
-    hours = [f"{h:02d}:00" for h in range(8, 22)]
-
-    # Curvas horárias Sem Termo (Pico às 09:00 e onda às 16:00-18:00)
-    rec_sem_termo_base = [1200, 15862, 6200, 2400, 2100, 2300, 2500, 3100, 5800, 9400, 8200, 4800, 2100, 800]
-    rec_sem_termo_comp = [1100, 14900, 5800, 2200, 2000, 2100, 2400, 2900, 5200, 8700, 7600, 4400, 1900, 700]
-
-    aloc_sem_termo_base = [600, 4200, 8500, 3100, 2300, 2200, 2400, 2800, 4900, 8600, 9100, 5900, 2600, 950]
-    aloc_sem_termo_comp = [550, 3900, 7900, 2950, 2150, 2050, 2250, 2600, 4600, 8100, 8500, 5400, 2400, 850]
-
-    liq_sem_termo_base = [300, 1800, 5400, 3400, 2500, 2100, 2300, 2600, 4100, 7200, 8800, 6700, 3200, 1100]
-    liq_sem_termo_comp = [280, 1650, 5100, 3200, 2350, 1950, 2150, 2450, 3900, 6800, 8300, 6200, 2900, 1000]
-
-    # Curvas horárias Termo (Concentração forte às 16:00 - 18:00)
-    rec_termo_base = [120, 450, 380, 290, 260, 310, 420, 890, 5349, 4800, 2400, 980, 250, 103]
-    rec_termo_comp = [100, 410, 350, 270, 240, 290, 390, 820, 4900, 4400, 2150, 890, 220, 90]
-
-    aloc_termo_base = [80, 320, 410, 310, 270, 290, 380, 740, 3900, 5100, 2900, 1150, 310, 120]
-    liq_termo_base = [50, 210, 380, 330, 280, 270, 340, 620, 2800, 4600, 3300, 1400, 390, 140]
-
-    # Curva Financeira por Horário (em Bilhões R$)
-    fin_base = [420, 3650, 1100, 480, 620, 1850, 920, 780, 1950, 1120, 890, 1540, 410, 120]
-    fin_comp = [390, 3420, 1020, 450, 590, 1710, 880, 730, 1810, 1050, 830, 1420, 380, 105]
-
-    # Curvas de Leadtime (min)
-    lt_total_base = [110, 18, 92, 68, 49, 44, 48, 36, 32, 34, 28, 22, 26, 15]
-    lt_total_comp = [98, 22, 85, 62, 52, 47, 50, 39, 35, 36, 30, 25, 28, 18]
-
-    lt_app_base = [32, 8, 24, 18, 14, 12, 13, 10, 9, 11, 8, 7, 8, 5]
-    lt_app_comp = [29, 9, 22, 17, 15, 13, 14, 11, 10, 12, 9, 8, 9, 6]
-
-    lt_cp_base = [78, 10, 68, 50, 35, 32, 35, 26, 23, 23, 20, 15, 18, 10]
-    lt_cp_comp = [69, 13, 63, 45, 37, 34, 36, 28, 25, 24, 21, 17, 19, 12]
-
-    df_hourly = pd.DataFrame({
-        "hora": hours,
-        "rec_st_base": rec_sem_termo_base,
-        "rec_st_comp": rec_sem_termo_comp,
-        "aloc_st_base": aloc_sem_termo_base,
-        "aloc_st_comp": aloc_sem_termo_comp,
-        "liq_st_base": liq_sem_termo_base,
-        "liq_st_comp": liq_sem_termo_comp,
-        "rec_t_base": rec_termo_base,
-        "rec_t_comp": rec_termo_comp,
-        "aloc_t_base": aloc_termo_base,
-        "liq_t_base": liq_termo_base,
-        "fin_base": fin_base,
-        "fin_comp": fin_comp,
-        "lt_total_base": lt_total_base,
-        "lt_total_comp": lt_total_comp,
-        "lt_app_base": lt_app_base,
-        "lt_app_comp": lt_app_comp,
-        "lt_cp_base": lt_cp_base,
-        "lt_cp_comp": lt_cp_comp,
-    })
-
-    # Ranking Top 15 Gestores
-    gestores = [
-        "MIDDLE_ASSET", "SANTANDER_ASSET", "ITAU_ASSET", "BRADESCO_ASSET",
-        "BTG_GESTAO", "KINEA_INVEST", "XP_ASSET", "SAFRA_ASSET",
-        "VERDE_ASSET", "KAPITALO", "LEGACY_CAPITAL", "ABSOLUTE_INVEST",
-        "SPX_CAPITAL", "VINLAND_CAPITAL", "ARX_INVEST"
-    ]
-    vol_gestores = [42500, 14200, 11800, 8900, 6400, 5100, 4300, 3800, 3100, 2400, 1950, 1600, 1400, 1100, 950]
-    pos16_gestores = [18400, 6200, 5100, 3900, 2800, 2100, 1850, 1600, 1200, 980, 840, 710, 620, 510, 430]
-    fin_gestores = [6850.4, 1420.8, 1180.5, 890.2, 640.1, 510.7, 430.9, 380.4, 310.2, 240.6, 195.3, 160.8, 140.2, 110.5, 98.6]
-    atraso_gestores = [48.2, 44.5, 41.0, 38.7, 36.4, 34.1, 31.8, 29.5, 27.9, 26.1, 24.8, 23.2, 21.9, 20.4, 19.1]
-
-    df_gestores = pd.DataFrame({
-        "rank": [f"#{i+1}" for i in range(15)],
-        "gestor": gestores,
-        "volume": vol_gestores,
-        "pos16": pos16_gestores,
-        "financeiro_bi": fin_gestores,
-        "atraso_min": atraso_gestores
-    })
-
-    # Ranking Corretoras
-    corretoras = [
-        "ITAU", "UBS", "BRADESCO", "JP MORGAN", "CITIBANK",
-        "BTG PACTUAL", "SANTANDER", "GOLDMAN", "MORGAN", "XP",
-        "BOFA", "CREDIT", "SAFRA", "GENIAL", "TULLETT"
-    ]
-    vol_corretoras = [16500, 13200, 11400, 9800, 8900, 8200, 7400, 6800, 6100, 5400, 4800, 3900, 3100, 2500, 2000]
-    atraso_corretoras = [52.4, 49.1, 46.8, 43.2, 39.7, 37.5, 35.8, 34.2, 31.9, 29.4, 27.6, 25.1, 23.8, 21.4, 19.8]
-
-    df_corretoras = pd.DataFrame({
-        "rank": [f"#{i+1}" for i in range(15)],
-        "corretora": corretoras,
-        "volume": vol_corretoras,
-        "atraso_min": atraso_corretoras
-    })
-
-    # Amostra Top 100 Operações
-    np.random.seed(42)
-    n_rows = 100
-    df_sample = pd.DataFrame({
-        "CORRETORA": np.random.choice(corretoras[:8], size=n_rows),
-        "GESTOR": np.random.choice(gestores[:6], size=n_rows, p=[0.45, 0.15, 0.12, 0.10, 0.10, 0.08]),
-        "ATIVO": np.random.choice(["Ações Vista", "Termo Ações", "BDR", "ETF", "Opções"], size=n_rows, p=[0.65, 0.15, 0.08, 0.07, 0.05]),
-        "VALOR (R$)": [f"R$ {val:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") for val in np.random.uniform(1_500_000, 280_000_000, size=n_rows)],
-        "STATUS": np.random.choice(["Liquidado no Prazo", "Atraso Operacional"], size=n_rows, p=[0.68, 0.32]),
-        "DATA/HORA": [f"2026-01-{np.random.randint(10, 30):02d} {np.random.randint(9, 19):02d}:{np.random.randint(0, 59):02d}:00" for _ in range(n_rows)]
-    })
-
-    return df_hourly, df_gestores, df_corretoras, df_sample
-
-
-df_hourly, df_gestores, df_corretoras, df_sample = get_simulated_data()
-
-
-# ==========================================
-# BARRA LATERAL (NAVEGAÇÃO PRINCIPAL)
-# ==========================================
-with st.sidebar:
-    st.markdown("### 🌐")
-    nav_section = st.radio(
-        "Menu",
-        options=["🏠 Início", "📈 Operação", "🛡️ Risco", "💼 Gestores", "🏦 Corretoras", "🔍 Análises", "⚙️ Config"],
-        index=1,
-        label_visibility="collapsed"
-    )
-    st.markdown("---")
-    uploaded_csv = st.file_uploader("📂 CSV", type=["csv"], help="Carregue a base operacional (.csv)")
-
-
-# ==========================================
-# CABEÇALHO E FILTROS GLOBAIS
-# ==========================================
-col_head_left, col_head_right = st.columns([4, 1])
-with col_head_left:
-    st.markdown('<div class="top-badge">MONITORAMENTO OPERACIONAL • B3 & MERCADO</div>', unsafe_allow_html=True)
-    st.markdown('<h1 class="main-title">Saúde da Operação</h1>', unsafe_allow_html=True)
-    st.markdown('<div class="main-subtitle">Liquidação, risco, eficiência e comportamento operacional em visão executiva.</div>', unsafe_allow_html=True)
-
-with col_head_right:
-    st.write("")
-    c_btn1, c_btn2 = st.columns(2)
-    with c_btn1:
-        st.button("🔄 Redefinir", use_container_width=True)
-    with c_btn2:
-        st.download_button(
-            "📥 Exportar CSV",
-            data=df_sample.to_csv(index=False).encode("utf-8"),
-            file_name="base_operacional.csv",
-            mime="text/csv",
-            use_container_width=True
-        )
-
-# Barra de Filtros de Período Base vs Comparação
-with st.container():
-    f1, f2, f3, f4, f5, f6, f7, f8, f9 = st.columns([1.1, 1.1, 1.3, 1.3, 0.9, 1.1, 1.1, 1.3, 1.3])
-    with f1:
-        dt_base_ini = st.date_input("PERÍODO BASE - INÍCIO", value=date(2026, 1, 1))
-    with f2:
-        dt_base_fim = st.date_input("PERÍODO BASE - FIM", value=date(2026, 1, 31))
-    with f3:
-        gestor_base = st.selectbox("GESTOR (BASE)", ["Todos os Gestores"] + df_gestores["gestor"].tolist())
-    with f4:
-        escopo_base = st.selectbox("ESCOPO (BASE)", ["Todos (Pré + Câmara)", "Apenas Pré-Matching", "Apenas Câmara"])
-    with f5:
-        st.write("")
-        ativar_comp = st.checkbox("ATIVAR COMPARAÇÃO", value=True)
-    with f6:
-        dt_comp_ini = st.date_input("PERÍODO COMP. - INÍCIO", value=date(2025, 12, 1), disabled=not ativar_comp)
-    with f7:
-        dt_comp_fim = st.date_input("PERÍODO COMP. - FIM", value=date(2025, 12, 31), disabled=not ativar_comp)
-    with f8:
-        gestor_comp = st.selectbox("GESTOR (COMPARAÇÃO)", ["Todos os Gestores"] + df_gestores["gestor"].tolist(), disabled=not ativar_comp)
-    with f9:
-        escopo_comp = st.selectbox("ESCOPO (COMPARAÇÃO)", ["Todos (Pré + Câmara)", "Apenas Pré-Matching", "Apenas Câmara"], disabled=not ativar_comp)
-
-
-# ==========================================
-# FUNÇÃO AUXILIAR DE LAYOUT PLOTLY
-# ==========================================
-def apply_dark_plotly_layout(fig, height=340, show_legend=True):
-    fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(11, 19, 37, 0.85)",
-        plot_bgcolor="rgba(11, 19, 37, 0.0)",
-        height=height,
-        margin=dict(l=20, r=20, t=42, b=20),
-        showlegend=show_legend,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=11, color="#CBD5E1")
-        ),
-        xaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(30, 41, 59, 0.45)",
-            zeroline=False,
-            tickfont=dict(color="#94A3B8", size=11)
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(30, 41, 59, 0.45)",
-            zeroline=False,
-            tickfont=dict(color="#94A3B8", size=11)
-        )
-    )
-    return fig
-
-
-def render_bottom_table(df):
-    st.markdown('<div class="section-title">📋 Amostra de Resultados Base (Top 100)</div>', unsafe_allow_html=True)
+def render_horizontal_ranking(title: str, badge: str, items: list, bar_style: str = "cyan", subtitle: str = ""):
+    max_val = max(x[1] for x in items) if items else 1
     rows_html = ""
-    for _, row in df.head(25).iterrows():
-        status_cls = "status-ok" if "Prazo" in row["STATUS"] else "status-delay"
+    fill_cls = "rank-bar-fill-cyan" if bar_style == "cyan" else "rank-bar-fill-amber"
+    for idx, (name, val, formatted_val) in enumerate(items, 1):
+        pct = max(4, int((val / max_val) * 100))
+        rows_html += f"""
+        <div class="rank-row">
+            <span class="rank-pos">#{idx}</span>
+            <span class="rank-name">{name}</span>
+            <div class="rank-bar-bg"><div class="{fill_cls}" style="width: {pct}%;"></div></div>
+            <span class="rank-val">{formatted_val}</span>
+        </div>
+        """
+    sub_html = f'<div class="rank-sub">{subtitle}</div>' if subtitle else ""
+    st.markdown(f"""
+    <div class="rank-card">
+        <div class="rank-header">
+            <div>
+                <div class="rank-title">{title}</div>
+                {sub_html}
+            </div>
+            <span class="chart-tag">{badge}</span>
+        </div>
+        {rows_html}
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_pendencias_table(df_pend: pd.DataFrame):
+    rows_html = ""
+    for _, r in df_pend.iterrows():
         rows_html += f"""
         <tr>
-            <td><b>{row['CORRETORA']}</b></td>
-            <td>{row['GESTOR']}</td>
-            <td>{row['ATIVO']}</td>
-            <td>{row['VALOR (R$)']}</td>
-            <td class="{status_cls}">{row['STATUS']}</td>
-            <td>{row['DATA/HORA']}</td>
+            <td>{r['id_op']}</td>
+            <td>{r['gestor']}</td>
+            <td>{r['origem']}</td>
+            <td>{r['valor']}</td>
+            <td><span class="status-pill-devolvida">{r['status']}</span></td>
+            <td>{r['registro']}</td>
         </tr>
         """
     st.markdown(f"""
-    <div class="custom-table-container">
-        <table class="ops-table">
+    <div class="table-card">
+        <div class="rank-header" style="margin-bottom: 4px;">
+            <div class="rank-title">Amostra de Pendências Atual (Top 100)</div>
+            <span class="chart-tag">SMART SAMPLE</span>
+        </div>
+        <table class="pend-table">
             <thead>
                 <tr>
-                    <th>CORRETORA</th>
+                    <th>ID OPERAÇÃO</th>
                     <th>GESTOR</th>
-                    <th>ATIVO</th>
+                    <th>ORIGEM</th>
                     <th>VALOR (R$)</th>
                     <th>STATUS</th>
-                    <th>DATA/HORA</th>
+                    <th>REGISTRO</th>
                 </tr>
             </thead>
             <tbody>
@@ -497,433 +457,538 @@ def render_bottom_table(df):
     """, unsafe_allow_html=True)
 
 
-# ==========================================
-# ROTEAMENTO: TELA INICIAL (VISÃO CONSOLIDADA)
-# ==========================================
-if nav_section == "🏠 Início":
-    st.markdown('<div class="breadcrumb">Início &nbsp;›&nbsp; <span>Visão Consolidada</span></div>', unsafe_allow_html=True)
+def style_plotly(fig: go.Figure, height: int = 300):
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="#0C172C",
+        plot_bgcolor="#0C172C",
+        height=height,
+        margin=dict(l=35, r=20, t=36, b=30),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=11, color="#E2E8F0")
+        ),
+        xaxis=dict(
+            showgrid=True,
+            gridcolor="rgba(30, 41, 59, 0.55)",
+            zeroline=False,
+            tickfont=dict(color="#94A3B8", size=10)
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor="rgba(30, 41, 59, 0.55)",
+            zeroline=False,
+            tickfont=dict(color="#94A3B8", size=10)
+        )
+    )
+    return fig
 
+
+# ==========================================
+# DADOS SIMULADOS CALIBRADOS COM AS FOTOS
+# ==========================================
+@st.cache_data
+def load_simulated_data():
+    hours = [f"{h:02d}:00" for h in range(8, 22)]
+
+    # 1. Curvas Intraday - Volume Sem Termo (Fotos 2 e 3)
+    rec_st_base = [60, 2237, 250, 140, 110, 80, 70, 80, 320, 860, 580, 180, 40, 10]
+    rec_st_comp = [55, 2180, 230, 160, 120, 75, 520, 140, 480, 840, 550, 150, 35, 8]
+    fin_st_base = [10, 40, 180, 220, 180, 90, 60, 110, 360, 910, 640, 240, 50, 12]
+    fin_st_comp = [15, 35, 160, 190, 160, 80, 110, 620, 420, 410, 280, 90, 25, 5]
+
+    # 2. Curvas Intraday - Volume Termo (Foto 3)
+    rec_t_base = [30, 860, 220, 25, 10, 8, 5, 12, 18, 20, 15, 10, 140, 20]
+    rec_t_comp = [40, 1040, 350, 30, 12, 10, 8, 10, 15, 18, 12, 8, 25, 10]
+    fin_t_base = [5, 15, 12, 8, 5, 5, 6, 8, 25, 320, 550, 45, 15, 5]
+    fin_t_comp = [5, 18, 14, 10, 6, 6, 8, 10, 40, 450, 580, 50, 20, 8]
+
+    # 3. Curvas Intraday - Leadtime (Fotos 6 e 8)
+    lt_tot_base = [110.1, 18.0, 98.0, 76.0, 49.0, 45.0, 34.0, 20.0, 11.0, 9.0, 8.0, 7.0, 11.0, 3.0]
+    lt_tot_comp = [92.0, 22.0, 128.0, 71.0, 46.0, 39.0, 33.0, 21.0, 23.0, 14.0, 7.0, 13.0, 8.0, 2.0]
+
+    lt_itau_base = [87.0, 2.0, 36.0, 28.0, 23.0, 32.0, 20.0, 6.0, 4.0, 4.0, 3.0, 4.0, 10.0, 2.0]
+    lt_itau_comp = [90.0, 1.0, 55.0, 16.0, 20.0, 15.0, 16.0, 12.0, 16.0, 7.0, 4.0, 5.0, 9.0, 1.0]
+
+    lt_cp_base = [23.1, 16.0, 63.9, 52.0, 25.0, 22.0, 21.0, 16.0, 9.0, 11.0, 12.0, 6.0, 2.0, 1.0]
+    lt_cp_comp = [2.0, 19.0, 74.0, 56.0, 30.0, 29.0, 22.0, 11.0, 13.0, 17.0, 11.0, 18.0, 1.0, 1.0]
+
+    df_intraday = pd.DataFrame({
+        "hora": hours,
+        "rec_st_base": rec_st_base, "rec_st_comp": rec_st_comp,
+        "fin_st_base": fin_st_base, "fin_st_comp": fin_st_comp,
+        "rec_t_base": rec_t_base, "rec_t_comp": rec_t_comp,
+        "fin_t_base": fin_t_base, "fin_t_comp": fin_t_comp,
+        "lt_tot_base": lt_tot_base, "lt_tot_comp": lt_tot_comp,
+        "lt_itau_base": lt_itau_base, "lt_itau_comp": lt_itau_comp,
+        "lt_cp_base": lt_cp_base, "lt_cp_comp": lt_cp_comp,
+    })
+
+    # Tabela de Pendências (Fotos 4 e 7)
+    df_pend = pd.DataFrame([
+        {"id_op": "13128567", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 3.331.059,48", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128568", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 848.359,57", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128569", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 2.511.288,12", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128570", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 6.189.193,19", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128571", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 434.828,79", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128572", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 8.517.414,00", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128573", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 25.430.083,50", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13128574", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 9.739.521,39", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
+        {"id_op": "13142633", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 2.266.224,00", "status": "Devolvida pelo usuário", "registro": "2026-09-15 10:00"},
+        {"id_op": "13142634", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 13.093.699,18", "status": "Devolvida pelo usuário", "registro": "2026-09-15 10:00"},
+        {"id_op": "13142635", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 9.579.033,96", "status": "Devolvida pelo usuário", "registro": "2026-09-15 10:00"},
+    ])
+
+    return df_intraday, df_pend
+
+
+df_intraday, df_pend = load_simulated_data()
+
+
+# ==========================================
+# BARRA LATERAL ESQUERDA (MENU PRINCIPAL)
+# ==========================================
+with st.sidebar:
+    st.markdown('<div class="cm-logo">CM</div>', unsafe_allow_html=True)
+    menu_lateral = st.radio(
+        "Navegação",
+        options=[
+            "◆ Home",
+            "● SELIC",
+            "◇ CETIP",
+            "~ Futuros",
+            "△ RV",
+            "○ Margem RV",
+            "◐ Margem D",
+            "◢ Termo"
+        ],
+        index=0,
+        label_visibility="collapsed"
+    )
+
+
+# ==========================================
+# CABEÇALHO SUPERIOR E BARRA DE FILTROS
+# ==========================================
+st.markdown('<div class="top-tag">INSTITUTIONAL OPERATIONS • AI POWERED</div>', unsafe_allow_html=True)
+st.markdown('<h1 class="page-title">Saúde da Operação</h1>', unsafe_allow_html=True)
+st.markdown('<div class="page-subtitle">Liquidação, risco, eficiência e comportamento operacional em visão executiva.</div>', unsafe_allow_html=True)
+
+# Breadcrumb dinâmico + Status
+if "Home" in menu_lateral:
+    bc_html = '<div class="breadcrumb-box"><span>Home</span> <span class="bc-pill">Dashboard</span></div>'
+    status_html = '<div class="status-pills"><div class="status-badge"><span class="dot-green"></span> Dados consolidados</div></div>'
+else:
+    bc_html = '<div class="breadcrumb-box"><span>Home</span> <span class="bc-pill">SELIC</span></div>'
+    status_html = '<div class="status-pills"><div class="status-badge"><span class="dot-green"></span> Dados consolidados</div><div class="status-badge"><span class="dot-green"></span> Sistema online</div></div>'
+
+st.markdown(f'<div class="header-bar">{bc_html}{status_html}</div>', unsafe_allow_html=True)
+
+# Filtros Globais (Período Base e Período Comparação lado a lado)
+col_f_base, col_f_comp = st.columns(2)
+with col_f_base:
+    with st.container(border=True):
+        b1, b2, b3, b4 = st.columns([1.1, 1.1, 1.3, 1.4])
+        b1.date_input("■ PERÍODO BASE - INÍCIO", value=date(2026, 9, 1))
+        b2.date_input("■ PERÍODO BASE - FIM", value=date(2026, 9, 18))
+        b3.selectbox("GESTOR (BASE)", ["Todos os Gestores", "MIDDLE_ASSET", "KINEA", "KAPITINT"])
+        b4.selectbox("ORIGEM (BASE)", ["Todas (Itaú + Mercado)", "Itaú", "Mercado"])
+
+with col_f_comp:
+    with st.container(border=True):
+        c1, c2, c3, c4 = st.columns([1.1, 1.1, 1.3, 1.4])
+        c1.date_input("● PERÍODO COMPARAÇÃO - INÍCIO", value=date(2026, 8, 1))
+        c2.date_input("● PERÍODO COMPARAÇÃO - FIM", value=date(2026, 8, 18))
+        c3.selectbox("GESTOR (COMPARAÇÃO)", ["Todos os Gestores", "MIDDLE_ASSET", "KINEA", "KAPITINT"])
+        c4.selectbox("ORIGEM (COMPARAÇÃO)", ["Todas (Itaú + Mercado)", "Itaú", "Mercado"])
+
+
+# ==========================================
+# ROTEAMENTO 1: PÁGINA INICIAL (FOTO 1)
+# ==========================================
+if "Home" in menu_lateral:
     k1, k2, k3 = st.columns(3)
     with k1:
-        render_kpi("VOLUME GLOBAL PROCESSADO", "110.332", "Operações no período")
+        render_kpi_card("VOLUME GLOBAL PROCESSADO", "110.332", "Operações no período", "#10B981")
     with k2:
-        render_kpi("FINANCEIRO GLOBAL MOVIMENTADO", "R$ 13550,2 bi", "Acumulado")
+        render_kpi_card("FINANCEIRO GLOBAL MOVIMENTADO", "R$ 13550,2 bi", "Acumulado", "#38BDF8")
     with k3:
-        render_kpi("SAÚDE DO SLA GLOBAL", "68%", "Aderência à Janela", "#34D399")
+        render_kpi_card("SAÚDE DO SLA GLOBAL", "68%", "Aderência < 15 min", "#F59E0B")
 
     st.markdown("""
-    <div class="consolidated-banner">
+    <div class="consolidated-box">
         <h2>VISÃO CONSOLIDADA</h2>
-        <p>Selecione uma área específica no menu lateral ou superior para acessar os detalhamentos e gráficos horários.</p>
+        <p>Selecione uma área específica no menu superior para acessar os detalhamentos e gráficos intraday.</p>
     </div>
     """, unsafe_allow_html=True)
 
+
 # ==========================================
-# ROTEAMENTO: OPERAÇÃO (E SUB-ABAS HORIZONTAIS)
+# ROTEAMENTO 2: MÓDULO SELIC (FOTOS 2 A 8)
 # ==========================================
-else:
-    sub_tab = st.radio(
-        "Sub-abas da Operação",
+elif "SELIC" in menu_lateral:
+    # Barra de Exportação CSV / PDF
+    _, col_exp1, col_exp2 = st.columns([8.2, 0.9, 0.9])
+    col_exp1.download_button(
+        "⬇ Exportar CSV",
+        data=df_pend.to_csv(index=False).encode("utf-8"),
+        file_name="selic_operacoes.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
+    col_exp2.button("📄 Gerar PDF", use_container_width=True)
+
+    # Sub-abas Horizontais da SELIC
+    aba_selic = st.radio(
+        "Abas SELIC",
         options=[
             "Volume de Operações",
-            "Financeiro Movimentado",
+            "Financeiro por Horário",
             "Top Gestores",
             "Top Corretoras",
             "Leadtime (SLA)",
-            "Alocação x Batimento",
-            "Rejeições",
-            "Cadastros",
-            "Risco",
-            "Cadeia",
-            "Preditivo (SLA)",
-            "Ranking Operacional"
+            "Operações Canceladas",
+            "Natureza ⚡",
+            "Heatmap ⚡",
+            "Qualidade ⚡",
+            "Previsão ARIMA ⚡",
+            "Ranking Operacional ⚡"
         ],
+        index=0,
         horizontal=True,
         label_visibility="collapsed"
     )
 
-    st.markdown(f'<div class="breadcrumb">Início &nbsp;›&nbsp; Operação &nbsp;›&nbsp; <span>{sub_tab}</span></div>', unsafe_allow_html=True)
+    # ----------------------------------------------------
+    # VISÃO A: VOLUME DE OPERAÇÕES (FOTOS 2, 3 e 4)
+    # ----------------------------------------------------
+    if aba_selic == "Volume de Operações":
+        # Bloco 1: Sem Termo
+        st.markdown('<div class="sec-title">Volume de Operações Recepcionadas</div>', unsafe_allow_html=True)
+        v1, v2, v3, v4 = st.columns(4)
+        with v1:
+            render_kpi_card("PICO DE LIQUIDAÇÃO (VOL) - SEM TERMO", "09:00", "~2237 ops/dia na média", "#10B981")
+        with v2:
+            render_kpi_card("HORÁRIO MAIS VOLÁTIL - SEM TERMO", "17:00", "Alta dispersão (p25-p75)", "#10B981")
+        with v3:
+            render_kpi_card("MÉDIA DIÁRIA (OPERAÇÕES) - SEM TERMO", "7.145", "Ticket: R$ 142.847.079,08", "#F59E0B")
+        with v4:
+            render_kpi_card("TOTAL NO PERÍODO - SEM TERMO", "92.886", "13 dias úteis", "#10B981")
 
-    # ------------------------------------------
-    # ABA 1: VOLUME DE OPERAÇÕES
-    # ------------------------------------------
-    if sub_tab == "Volume de Operações":
-        # 1.1 Sem Termo
-        st.markdown('<div class="section-title">📊 Volume de Operações Recepcionadas — Sem Termo</div>', unsafe_allow_html=True)
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            render_kpi("PICO DE RECEPÇÃO (PRÉ) - SEM TERMO", "09:00", "Média de 15.862 ops neste horário")
-        with c2:
-            render_kpi("HORÁRIO MAIS CRÍTICO - SEM TERMO", "17:00", "Maior concentração pós-16h", "#F59E0B")
-        with c3:
-            render_kpi("MÉDIA DIÁRIA APÓS 16H - SEM TERMO", "7.145", "Total de 142.895 no mês")
-        with c4:
-            render_kpi("TOTAL DO PERÍODO - SEM TERMO", "92.998", "Operações")
+        st.markdown("""
+        <div class="chart-box-header">
+            <span class="chart-box-title">Distribuição Intraday - Sem Termo</span>
+            <span class="chart-tag">VOLUME PATTERN</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.markdown('<div class="section-title">📈 Distribuição Horária - Sem Termo</div>', unsafe_allow_html=True)
-        curvas_st = st.multiselect(
-            "Séries visíveis (Sem Termo):",
-            ["Recepção (Início)", "Alocação", "Liquidação"],
-            default=["Recepção (Início)", "Alocação", "Liquidação"],
-            label_visibility="collapsed"
-        )
+        chk_cols = st.columns([1.1, 1.3, 1.1, 1.6, 5])
+        st_p75 = chk_cols[0].checkbox("P75/P25", value=True, key="st_p75")
+        st_rec = chk_cols[1].checkbox("Recepção (Início)", value=True, key="st_rec")
+        st_fin = chk_cols[2].checkbox("Finalização", value=True, key="st_fin")
+        st_cmp = chk_cols[3].checkbox("Período Comparação", value=True, key="st_cmp")
 
-        fig_st = go.Figure()
-        # Banda P25-P75 simulada
-        p75 = [v * 1.15 for v in df_hourly["rec_st_base"]]
-        p25 = [v * 0.85 for v in df_hourly["rec_st_base"]]
-        fig_st.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=p75, mode="lines", line=dict(width=0),
-            showlegend=False, hoverinfo="skip"
-        ))
-        fig_st.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=p25, mode="lines", line=dict(width=0),
-            fill="tonexty", fillcolor="rgba(56, 189, 248, 0.12)",
-            name="Faixa P25 - P75"
-        ))
-
-        if "Recepção (Início)" in curvas_st:
-            fig_st.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["rec_st_base"], mode="lines+markers",
+        fig_vol_st = go.Figure()
+        if st_p75:
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=[v * 1.12 for v in df_intraday["rec_st_base"]],
+                mode="lines", line=dict(width=0), name="P75", showlegend=True
+            ))
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=[v * 0.88 for v in df_intraday["rec_st_base"]],
+                mode="lines", line=dict(width=0), fill="tonexty",
+                fillcolor="rgba(56, 189, 248, 0.14)", name="P25", showlegend=True
+            ))
+        if st_rec:
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["rec_st_base"], mode="lines+markers",
                 name="Recepção (Início) - Período Base",
-                line=dict(color="#38BDF8", width=3, shape="spline")
+                line=dict(color="#22D3EE", width=2.8, shape="spline")
             ))
-            if ativar_comp:
-                fig_st.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["rec_st_comp"], mode="lines",
-                    name="Recepção (Início) - Comparação",
-                    line=dict(color="#38BDF8", width=2, dash="dot", shape="spline")
-                ))
-
-        if "Alocação" in curvas_st:
-            fig_st.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["aloc_st_base"], mode="lines+markers",
-                name="Alocação - Período Base",
-                line=dict(color="#F59E0B", width=2.5, shape="spline")
+        if st_fin:
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["fin_st_base"], mode="lines+markers",
+                name="Finalização - Período Base",
+                line=dict(color="#10B981", width=2.8, shape="spline")
             ))
-            if ativar_comp:
-                fig_st.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["aloc_st_comp"], mode="lines",
-                    name="Alocação - Comparação",
-                    line=dict(color="#F59E0B", width=1.8, dash="dot", shape="spline")
-                ))
-
-        if "Liquidação" in curvas_st:
-            fig_st.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["liq_st_base"], mode="lines+markers",
-                name="Liquidação - Período Base",
-                line=dict(color="#FB7185", width=2.5, shape="spline")
+        if st_cmp and st_rec:
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["rec_st_comp"], mode="lines+markers",
+                name="Recepção (Início) - Comparação",
+                line=dict(color="#FB7185", width=2, dash="dot", shape="spline")
             ))
-            if ativar_comp:
-                fig_st.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["liq_st_comp"], mode="lines",
-                    name="Liquidação - Comparação",
-                    line=dict(color="#FB7185", width=1.8, dash="dot", shape="spline")
-                ))
+        if st_cmp and st_fin:
+            fig_vol_st.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["fin_st_comp"], mode="lines+markers",
+                name="Finalização - Comparação",
+                line=dict(color="#FBBF24", width=2, dash="dot", shape="spline")
+            ))
+        st.plotly_chart(style_plotly(fig_vol_st, height=310), use_container_width=True)
 
-        st.plotly_chart(apply_dark_plotly_layout(fig_st, height=340), use_container_width=True)
-
-        # 1.2 Termo
-        st.markdown('<div class="section-title">📊 Volume de Operações Recepcionadas — Termo</div>', unsafe_allow_html=True)
+        # Bloco 2: Termo
+        st.markdown('<div class="sec-title">Volume de Operações Recepcionadas — Termo</div>', unsafe_allow_html=True)
         t1, t2, t3, t4 = st.columns(4)
         with t1:
-            render_kpi("PICO DE RECEPÇÃO (PRÉ) - TERMO", "16:00", "Média de 5.349 ops neste horário")
+            render_kpi_card("PICO DE LIQUIDAÇÃO (VOL) - TERMO", "18:00", "~550 ops/dia na média", "#10B981")
         with t2:
-            render_kpi("HORÁRIO MAIS CRÍTICO - TERMO", "17:00", "Maior concentração pós-16h", "#F59E0B")
+            render_kpi_card("HORÁRIO MAIS VOLÁTIL - TERMO", "17:00", "Alta dispersão (p25-p75)", "#10B981")
         with t3:
-            render_kpi("MÉDIA DIÁRIA APÓS 16H - TERMO", "1.309", "Total de 26.178 no mês")
+            render_kpi_card("MÉDIA DIÁRIA (OPERAÇÕES) - TERMO", "1.308", "Ticket: R$ 11.103.089,32", "#F59E0B")
         with t4:
-            render_kpi("TOTAL DO PERÍODO - TERMO", "17.002", "Operações")
+            render_kpi_card("TOTAL NO PERÍODO - TERMO", "17.002", "13 dias úteis", "#10B981")
 
-        st.markdown('<div class="section-title">📈 Distribuição Horária - Termo</div>', unsafe_allow_html=True)
-        fig_t = go.Figure()
-        fig_t.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=df_hourly["rec_t_base"], mode="lines+markers",
-            name="Recepção (Termo) - Período Base",
-            line=dict(color="#38BDF8", width=3, shape="spline"),
-            fill="tozeroy", fillcolor="rgba(56, 189, 248, 0.10)"
-        ))
-        fig_t.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=df_hourly["aloc_t_base"], mode="lines+markers",
-            name="Alocação (Termo) - Período Base",
-            line=dict(color="#F59E0B", width=2.5, shape="spline")
-        ))
-        fig_t.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=df_hourly["liq_t_base"], mode="lines+markers",
-            name="Liquidação (Termo) - Período Base",
-            line=dict(color="#FB7185", width=2.5, shape="spline")
-        ))
-        if ativar_comp:
-            fig_t.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["rec_t_comp"], mode="lines",
-                name="Recepção (Termo) - Comparação",
-                line=dict(color="#94A3B8", width=2, dash="dot", shape="spline")
+        st.markdown("""
+        <div class="chart-box-header">
+            <span class="chart-box-title">Distribuição Intraday - Termo</span>
+            <span class="chart-tag">VOLUME PATTERN</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        t_cols = st.columns([1.1, 1.3, 1.1, 1.6, 5])
+        t_p75 = t_cols[0].checkbox("P75/P25", value=True, key="t_p75")
+        t_rec = t_cols[1].checkbox("Recepção (Início)", value=True, key="t_rec")
+        t_fin = t_cols[2].checkbox("Finalização", value=True, key="t_fin")
+        t_cmp = t_cols[3].checkbox("Período Comparação", value=True, key="t_cmp")
+
+        fig_vol_t = go.Figure()
+        if t_p75:
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=[v * 1.15 for v in df_intraday["fin_t_base"]],
+                mode="lines", line=dict(width=0), name="P75", showlegend=True
             ))
-        st.plotly_chart(apply_dark_plotly_layout(fig_t, height=320), use_container_width=True)
-
-        # 1.3 Visão Consolidada de Recepção e Liquidação (2 Gráficos de Barra Horizontais)
-        st.markdown('<div class="section-title">🏆 Visão Consolidada de Recepção e Liquidação</div>', unsafe_allow_html=True)
-        b_left, b_right = st.columns(2)
-        df_g_sorted = df_gestores.iloc[::-1]
-
-        with b_left:
-            st.caption("**Top 15 Gestores (Volume Total)**")
-            fig_bar1 = go.Figure(go.Bar(
-                x=df_g_sorted["volume"],
-                y=df_g_sorted["rank"] + " " + df_g_sorted["gestor"],
-                orientation="h",
-                marker=dict(color="#38BDF8"),
-                text=df_g_sorted["volume"],
-                textposition="outside"
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=[v * 0.85 for v in df_intraday["fin_t_base"]],
+                mode="lines", line=dict(width=0), fill="tonexty",
+                fillcolor="rgba(56, 189, 248, 0.20)", name="P25", showlegend=True
             ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_bar1, height=420, show_legend=False), use_container_width=True)
-
-        with b_right:
-            st.caption("**Gestores que mais batem após 16h**")
-            fig_bar2 = go.Figure(go.Bar(
-                x=df_g_sorted["pos16"],
-                y=df_g_sorted["rank"] + " " + df_g_sorted["gestor"],
-                orientation="h",
-                marker=dict(color="#2DD4BF"),
-                text=df_g_sorted["pos16"],
-                textposition="outside"
+        if t_rec:
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["rec_t_base"], mode="lines+markers",
+                name="Recepção (Início) - Período Base (Termo)",
+                line=dict(color="#38BDF8", width=2.6, shape="spline")
             ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_bar2, height=420, show_legend=False), use_container_width=True)
+        if t_fin:
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["fin_t_base"], mode="lines+markers",
+                name="Finalização - Período Base (Termo)",
+                line=dict(color="#60A5FA", width=2.6, shape="spline")
+            ))
+        if t_cmp and t_rec:
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["rec_t_comp"], mode="lines+markers",
+                name="Recepção (Início) - Comparação (Termo)",
+                line=dict(color="#FBBF24", width=2, dash="dot", shape="spline")
+            ))
+        if t_cmp and t_fin:
+            fig_vol_t.add_trace(go.Scatter(
+                x=df_intraday["hora"], y=df_intraday["fin_t_comp"], mode="lines+markers",
+                name="Finalização - Comparação (Termo)",
+                line=dict(color="#FB7185", width=2, dash="dot", shape="spline")
+            ))
+        st.plotly_chart(style_plotly(fig_vol_t, height=300), use_container_width=True)
 
-        render_bottom_table(df_sample)
+        # Bloco 3: Visão Consolidada de Recepção e Liquidação (Foto 4)
+        st.markdown('<div class="sec-title">Visão Consolidada de Recepção e Liquidação</div>', unsafe_allow_html=True)
+        col_rk1, col_rk2 = st.columns(2)
 
-    # ------------------------------------------
-    # ABA 2: FINANCEIRO MOVIMENTADO
-    # ------------------------------------------
-    elif sub_tab == "Financeiro Movimentado":
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            render_kpi("PICO FINANCEIRO", "09:00", "Horário de maior concentração")
-        with c2:
-            render_kpi("MÉDIA DIÁRIA (MOVIMENTADO)", "R$ 1042,3 bi", "No período")
-        with c3:
-            render_kpi("TOTAL MOVIMENTADO NO PERÍODO", "R$ 13.550.154.350.173,16", "Acumulado Bruto", "#34D399")
-        with c4:
-            render_kpi("TOTAL DE OPERAÇÕES", "109.999", "Com valor financeiro")
+        top10_gestores_vol = [
+            ("MIDDLE_ASSET", 35420, "35.420"),
+            ("B3F", 29307, "29.307"),
+            ("KINEA", 11382, "11.382"),
+            ("KAPITINT", 6866, "6.866"),
+            ("GRIFFO", 5044, "5.044"),
+            ("ACECAPITAL", 2587, "2.587"),
+            ("VINLAND", 1760, "1.760"),
+            ("B43", 1644, "1.644"),
+            ("TEMPLETON", 1628, "1.628"),
+            ("FAPES", 1002, "1.002"),
+        ]
+        top10_pos16 = [
+            ("MIDDLE_ASSET", 5029, "5.029"),
+            ("KAPITINT", 4573, "4.573"),
+            ("LEGACY", 403, "403"),
+            ("IBIUNA", 76, "76"),
+            ("PORTOINVEST", 62, "62"),
+            ("KINEA", 58, "58"),
+            ("GRIFFO", 53, "53"),
+            ("GENOA", 40, "40"),
+            ("SPXEQUITIES", 20, "20"),
+            ("VINLAND", 17, "17"),
+        ]
 
-        st.markdown('<div class="section-title">💹 Volume Financeiro por Horário</div>', unsafe_allow_html=True)
-        fig_fin = go.Figure()
-        fig_fin.add_trace(go.Scatter(
-            x=df_hourly["hora"], y=df_hourly["fin_base"],
-            mode="lines+markers",
-            name="Volume Fin. Médio Período Base (R$ bi)",
-            line=dict(color="#10B981", width=3, shape="spline"),
-            fill="tozeroy", fillcolor="rgba(16, 185, 129, 0.22)"
+        with col_rk1:
+            render_horizontal_ranking("Top 10 Gestores", "VOLUME", top10_gestores_vol, bar_style="cyan")
+        with col_rk2:
+            render_horizontal_ranking(
+                "Gestores que mais boletam após 16h",
+                "A Termo | Sem Termo",
+                top10_pos16,
+                bar_style="cyan",
+                subtitle="10.373 operações na visão selecionada"
+            )
+
+        # Bloco 4: Tabela de Pendências
+        render_pendencias_table(df_pend)
+
+    # ----------------------------------------------------
+    # VISÃO B: LEADTIME (SLA) (FOTOS 5, 6, 7 e 8)
+    # ----------------------------------------------------
+    elif aba_selic == "Leadtime (SLA)":
+        # Filtro de Modalidade da Operação (Foto 5)
+        with st.container(border=True):
+            m1, m2, m3 = st.columns([3.5, 1.2, 4])
+            m1.multiselect(
+                "MODALIDADE DA OPERAÇÃO (FILTRO LEADTIME)",
+                options=["Antecipação de compromissada", "Caução", "Compromissada", "Definitiva"],
+                default=["Antecipação de compromissada", "Caução", "Compromissada"]
+            )
+            with m2:
+                st.write("")
+                b_sel1, b_sel2 = st.columns(2)
+                b_sel1.button("✓ Selecionar Todas", use_container_width=True)
+                b_sel2.button("✕ Limpar Seleção", use_container_width=True)
+
+        # 1. Leadtime Total (Fotos 5 e 6)
+        st.markdown('<div class="sec-title">Leadtime Total</div>', unsafe_allow_html=True)
+        lt1, lt2, lt3, lt4 = st.columns(4)
+        with lt1:
+            render_kpi_card("LEADTIME MÉDIO TOTAL", "23.1 min", "Tempo de Processamento", "#10B981")
+        with lt2:
+            render_kpi_card("HORÁRIO MAIS CRÍTICO (GARGALO)", "08:00", "110.1 min na média", "#F59E0B")
+        with lt3:
+            render_kpi_card("SLA TOTAL (< 15 MIN)", "68%", "Aderência ao Acordo", "#10B981")
+        with lt4:
+            render_kpi_card("TOTAL DE OPERAÇÕES", "109.888", "Operações processadas", "#10B981")
+
+        st.markdown("""
+        <div class="chart-box-header">
+            <span class="chart-box-title">Leadtime Total por Horário</span>
+            <span class="chart-tag">SLA MONITOR</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        fig_lt_tot = go.Figure()
+        fig_lt_tot.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_tot_base"], mode="lines+markers",
+            name="Leadtime Total - Período Base (min)",
+            line=dict(color="#FDA4AF", width=2.8, shape="spline")
         ))
-        if ativar_comp:
-            fig_fin.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["fin_comp"],
-                mode="lines",
-                name="Volume Fin. Médio Período Comparação (R$ bi)",
-                line=dict(color="#F43F5E", width=2, dash="dot", shape="spline")
-            ))
-        st.plotly_chart(apply_dark_plotly_layout(fig_fin, height=350), use_container_width=True)
-
-        st.markdown('<div class="section-title">🏅 Top 15 Gestores - Volume Financeiro</div>', unsafe_allow_html=True)
-        df_g_fin = df_gestores.iloc[::-1]
-        fig_fin_bar = go.Figure(go.Bar(
-            x=df_g_fin["financeiro_bi"],
-            y=df_g_fin["rank"] + " " + df_g_fin["gestor"],
-            orientation="h",
-            marker=dict(color="#38BDF8"),
-            text=[f"R$ {v:,.1f} bi" for v in df_g_fin["financeiro_bi"]],
-            textposition="outside"
+        fig_lt_tot.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_tot_comp"], mode="lines+markers",
+            name="Leadtime Total - Período Comparação (min)",
+            line=dict(color="#2DD4BF", width=2, dash="dot", shape="spline")
         ))
-        st.plotly_chart(apply_dark_plotly_layout(fig_fin_bar, height=430, show_legend=False), use_container_width=True)
+        st.plotly_chart(style_plotly(fig_lt_tot, height=280), use_container_width=True)
 
-        render_bottom_table(df_sample)
+        # 2. Leadtime Itaú (Foto 6)
+        st.markdown('<div class="sec-title">Leadtime Itaú</div>', unsafe_allow_html=True)
+        li1, li2, li3, li4 = st.columns(4)
+        with li1:
+            render_kpi_card("LEADTIME MÉDIO ITAÚ", "7.0 min", "Processamento Interno", "#10B981")
+        with li2:
+            render_kpi_card("HORÁRIO MAIS CRÍTICO (ITAÚ)", "08:00", "87.0 min na média", "#F59E0B")
+        with li3:
+            render_kpi_card("SLA ITAÚ (< 10 MIN)", "88%", "Eficiência Interna", "#10B981")
+        with li4:
+            render_kpi_card("% DO LEADTIME TOTAL", "30%", "Responsabilidade", "#F59E0B")
 
-    # ------------------------------------------
-    # ABA 3: TOP GESTORES
-    # ------------------------------------------
-    elif sub_tab == "Top Gestores":
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            render_kpi("GESTOR LÍDER (FINANCEIRO)", "MIDDLE_ASSET", "Maior volume")
-        with c2:
-            render_kpi("CONCENTRAÇÃO TOP 3", "70%", "Risco de dependência", "#F59E0B")
-        with c3:
-            render_kpi("TICKET MÉDIO DA LÍDER", "R$ 260,0 mi", "Por operação")
+        st.markdown("""
+        <div class="chart-box-header">
+            <span class="chart-box-title">Leadtime Itaú por Horário</span>
+            <span class="chart-tag">INTERNAL PERFORMANCE</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.markdown('<div class="section-title">📊 Top Gestores por Financeiro</div>', unsafe_allow_html=True)
-        df_g_top = df_gestores.iloc[::-1]
-        fig_top_g = go.Figure(go.Bar(
-            x=df_g_top["financeiro_bi"] * 1e9,
-            y=df_g_top["gestor"],
-            orientation="h",
-            marker=dict(color="#38BDF8"),
-            text=[f"R$ {v:,.1f} bi" for v in df_g_top["financeiro_bi"]],
-            textposition="outside"
+        fig_lt_itau = go.Figure()
+        fig_lt_itau.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_itau_base"], mode="lines+markers",
+            name="Leadtime Itaú - Período Base (min)",
+            line=dict(color="#34D399", width=2.8, shape="spline")
         ))
-        st.plotly_chart(apply_dark_plotly_layout(fig_top_g, height=430, show_legend=False), use_container_width=True)
-
-        render_bottom_table(df_sample)
-
-    # ------------------------------------------
-    # ABA 4: TOP CORRETORAS
-    # ------------------------------------------
-    elif sub_tab == "Top Corretoras":
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            render_kpi("CORRETORA LÍDER (VOLUME)", "ITAÚ", "16.500 ops")
-        with c2:
-            render_kpi("MARKET SHARE LÍDER (OPERAÇÕES)", "15%", "Participação")
-        with c3:
-            render_kpi("CORRETORAS ATIVAS NO PERÍODO", "59", "Com movimentação")
-
-        st.markdown('<div class="section-title">🍩 Distribuição por Corretora</div>', unsafe_allow_html=True)
-        fig_donut = go.Figure(go.Pie(
-            labels=df_corretoras["corretora"],
-            values=df_corretoras["volume"],
-            hole=0.68,
-            textinfo="none",
-            marker=dict(colors=[
-                "#38BDF8", "#0EA5E9", "#2563EB", "#1D4ED8", "#3B82F6",
-                "#60A5FA", "#2DD4BF", "#14B8A6", "#F43F5E", "#FB7185",
-                "#F59E0B", "#A855F7", "#6366F1", "#8B5CF6", "#64748B"
-            ])
+        fig_lt_itau.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_itau_comp"], mode="lines+markers",
+            name="Leadtime Itaú - Período Comparação (min)",
+            line=dict(color="#2DD4BF", width=2, dash="dot", shape="spline")
         ))
-        fig_donut.update_layout(
-            template="plotly_dark",
-            paper_bgcolor="rgba(11, 19, 37, 0.85)",
-            height=380,
-            margin=dict(l=20, r=20, t=30, b=20),
-            legend=dict(orientation="v", x=0.72, y=0.5, font=dict(size=12))
-        )
-        st.plotly_chart(fig_donut, use_container_width=True)
+        st.plotly_chart(style_plotly(fig_lt_itau, height=280), use_container_width=True)
 
-        render_bottom_table(df_sample)
+        # 3. Leadtime Contraparte (Foto 8)
+        st.markdown('<div class="sec-title">Leadtime Contraparte</div>', unsafe_allow_html=True)
+        lc1, lc2, lc3, lc4 = st.columns(4)
+        with lc1:
+            render_kpi_card("LEADTIME MÉDIO CONTRAPARTE", "16.2 min", "Processamento Externo", "#10B981")
+        with lc2:
+            render_kpi_card("HORÁRIO MAIS CRÍTICO (CONTRAPARTE)", "10:00", "63.9 min na média", "#F59E0B")
+        with lc3:
+            render_kpi_card("SLA CONTRAPARTE (< 10 MIN)", "71%", "Eficiência Externa", "#10B981")
+        with lc4:
+            render_kpi_card("% DO LEADTIME TOTAL", "70%", "Dependência Externa", "#F59E0B")
 
-    # ------------------------------------------
-    # ABA 5: LEADTIME (SLA)
-    # ------------------------------------------
-    elif sub_tab == "Leadtime (SLA)":
-        f_lt1, f_lt2 = st.columns([2, 3])
-        with f_lt1:
-            visao_lt = st.selectbox("VISÃO DE LEADTIME", ["Visão Completa (Todos)", "Apenas Leadtime Total", "Leadtime Interno vs Contraparte"])
-        with f_lt2:
-            st.write("")
-            c_chk1, c_chk2, c_chk3 = st.columns(3)
-            show_lt_tot = c_chk1.checkbox("Leadtime Total", value=True)
-            show_lt_app = c_chk2.checkbox("Leadtime App", value=True)
-            show_lt_cp = c_chk3.checkbox("Leadtime Contraparte", value=True)
+        st.markdown("""
+        <div class="chart-box-header">
+            <span class="chart-box-title">Leadtime Contraparte por Horário</span>
+            <span class="chart-tag">EXTERNAL PERFORMANCE</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-        if show_lt_tot:
-            st.markdown('<div class="section-title">⏱️ Leadtime Total</div>', unsafe_allow_html=True)
-            l1, l2, l3, l4 = st.columns(4)
-            with l1:
-                render_kpi("LEADTIME MÉDIO (TOTAL)", "25.1 min", "Tempo médio ponta a ponta")
-            with l2:
-                render_kpi("HORÁRIO MAIS CRÍTICO (ATRASO)", "09:00", "Maior gargalo", "#FB7185")
-            with l3:
-                render_kpi("SLA ATINGIDO (< 30 MIN)", "68%", "Aderência à janela", "#34D399")
-            with l4:
-                render_kpi("VOLUME DENTRO DO SLA", "109.999", "Operações analisadas")
+        fig_lt_cp = go.Figure()
+        fig_lt_cp.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_cp_base"], mode="lines+markers",
+            name="Leadtime Contraparte - Período Base (min)",
+            line=dict(color="#E2E8F0", width=2.8, shape="spline")
+        ))
+        fig_lt_cp.add_trace(go.Scatter(
+            x=df_intraday["hora"], y=df_intraday["lt_cp_comp"], mode="lines+markers",
+            name="Leadtime Contraparte - Período Comparação (min)",
+            line=dict(color="#2DD4BF", width=2, dash="dot", shape="spline")
+        ))
+        st.plotly_chart(style_plotly(fig_lt_cp, height=280), use_container_width=True)
 
-            fig_lt1 = go.Figure()
-            fig_lt1.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["lt_total_base"],
-                mode="lines+markers", name="Leadtime Total - Período Base (min)",
-                line=dict(color="#FB7185", width=3, shape="spline")
-            ))
-            if ativar_comp:
-                fig_lt1.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["lt_total_comp"],
-                    mode="lines", name="Leadtime Total - Período Comparação (min)",
-                    line=dict(color="#E2E8F0", width=2, dash="dot", shape="spline")
-                ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_lt1, height=290), use_container_width=True)
-
-        if show_lt_app:
-            st.markdown('<div class="section-title">⚡ Leadtime App</div>', unsafe_allow_html=True)
-            a1, a2, a3, a4 = st.columns(4)
-            with a1:
-                render_kpi("LEADTIME MÉDIO (APP)", "7.0 min", "Processamento interno")
-            with a2:
-                render_kpi("HORÁRIO MAIS CRÍTICO (APP)", "08:00", "Pico de latência")
-            with a3:
-                render_kpi("SLA INTERNO (< 10 MIN)", "88%", "Eficiência de sistema", "#34D399")
-            with a4:
-                render_kpi("% DO LEADTIME TOTAL", "30%", "Peso na operação")
-
-            fig_lt2 = go.Figure()
-            fig_lt2.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["lt_app_base"],
-                mode="lines+markers", name="Leadtime App - Período Base (min)",
-                line=dict(color="#38BDF8", width=3, shape="spline")
-            ))
-            if ativar_comp:
-                fig_lt2.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["lt_app_comp"],
-                    mode="lines", name="Leadtime App - Período Comparação (min)",
-                    line=dict(color="#94A3B8", width=2, dash="dot", shape="spline")
-                ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_lt2, height=290), use_container_width=True)
-
-        if show_lt_cp:
-            st.markdown('<div class="section-title">🤝 Leadtime Contraparte</div>', unsafe_allow_html=True)
-            p1, p2, p3, p4 = st.columns(4)
-            with p1:
-                render_kpi("LEADTIME MÉDIO (CONTRAPARTE)", "18.2 min", "Tempo externo / mercado")
-            with p2:
-                render_kpi("HORÁRIO MAIS CRÍTICO (CONTRAPARTE)", "10:00", "Maior demora externa", "#F59E0B")
-            with p3:
-                render_kpi("SLA CONTRAPARTE (< 20 MIN)", "71%", "Eficiência externa")
-            with p4:
-                render_kpi("% DO LEADTIME TOTAL", "70%", "Peso na operação")
-
-            fig_lt3 = go.Figure()
-            fig_lt3.add_trace(go.Scatter(
-                x=df_hourly["hora"], y=df_hourly["lt_cp_base"],
-                mode="lines+markers", name="Leadtime Contraparte - Período Base (min)",
-                line=dict(color="#60A5FA", width=3, shape="spline")
-            ))
-            if ativar_comp:
-                fig_lt3.add_trace(go.Scatter(
-                    x=df_hourly["hora"], y=df_hourly["lt_cp_comp"],
-                    mode="lines", name="Leadtime Contraparte - Período Comparação (min)",
-                    line=dict(color="#94A3B8", width=2, dash="dot", shape="spline")
-                ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_lt3, height=290), use_container_width=True)
-
-        # Origem e Impacto dos Atrasos
-        st.markdown('<div class="section-title">🔥 Origem e Impacto dos Atrasos</div>', unsafe_allow_html=True)
-        st.selectbox("AGRUPAMENTO / ESCOPO DE ATRASO", ["Todas as Operações", "Apenas Operações Fora do SLA (> 30 min)"])
+        # 4. Origem e Impacto dos Atrasos (Fotos 7 e 8)
+        st.markdown('<div class="sec-title">Origem e Impacto dos Atrasos</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.selectbox("CONTRAPARTE / CORRETORA", ["Todas as contrapartes", "JPMorgan", "BGC", "UBS", "DEUTSCHE"])
 
         col_at1, col_at2 = st.columns(2)
-        df_g_at = df_gestores.iloc[::-1]
-        df_c_at = df_corretoras.iloc[::-1]
+        top10_gestores_atraso = [
+            ("PROFI", 515.0, "515.0 min"),
+            ("JP_NEW_YORK", 452.4, "452.4 min"),
+            ("BANKNYC", 442.0, "442.0 min"),
+            ("ITAUEUROPA", 271.4, "271.4 min"),
+            ("ROBECPRO", 264.4, "264.4 min"),
+            ("PICTET", 228.0, "228.0 min"),
+            ("REBUS", 191.4, "191.4 min"),
+            ("SUNW", 190.8, "190.8 min"),
+            ("CREDAGRICOLE", 167.8, "167.8 min"),
+            ("BANCOSUISSE", 152.7, "152.7 min"),
+        ]
+        top10_corretoras_atraso = [
+            ("JPMorgan", 603.0, "603.0 min"),
+            ("BGC", 449.0, "449.0 min"),
+            ("UBS", 331.2, "331.2 min"),
+            ("DEUTSCHE", 227.2, "227.2 min"),
+            ("GOLDMAN", 201.8, "201.8 min"),
+            ("BANCOBB", 191.4, "191.4 min"),
+            ("MERRIL", 187.7, "187.7 min"),
+            ("CALYON", 167.5, "167.5 min"),
+            ("HSBC", 159.4, "159.4 min"),
+            ("CITIBANK", 157.1, "157.1 min"),
+        ]
 
         with col_at1:
-            st.caption("**Top 15 Gestores Impactados**")
-            fig_at1 = go.Figure(go.Bar(
-                x=df_g_at["atraso_min"],
-                y=df_g_at["rank"] + " " + df_g_at["gestor"],
-                orientation="h",
-                marker=dict(color=df_g_at["atraso_min"], colorscale="YlOrRd"),
-                text=[f"{v:.1f} min" for v in df_g_at["atraso_min"]],
-                textposition="outside"
-            ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_at1, height=420, show_legend=False), use_container_width=True)
-
+            render_horizontal_ranking("Top 10 Gestores Impactados", "CONTRAPARTE X GESTOR", top10_gestores_atraso, bar_style="amber")
         with col_at2:
-            st.caption("**Top 15 Corretoras que Mais Atrasam**")
-            fig_at2 = go.Figure(go.Bar(
-                x=df_c_at["atraso_min"],
-                y=df_c_at["rank"] + " " + df_c_at["corretora"],
-                orientation="h",
-                marker=dict(color=df_c_at["atraso_min"], colorscale="Hot"),
-                text=[f"{v:.1f} min" for v in df_c_at["atraso_min"]],
-                textposition="outside"
-            ))
-            st.plotly_chart(apply_dark_plotly_layout(fig_at2, height=420, show_legend=False), use_container_width=True)
+            render_horizontal_ranking("Top 10 Corretoras que Mais Atrasam", "LEADTIME MÉDIO", top10_corretoras_atraso, bar_style="amber")
 
-        render_bottom_table(df_sample)
+        # 5. Tabela de Pendências
+        render_pendencias_table(df_pend)
 
     else:
-        st.info(f"A aba **{sub_tab}** está estruturada no menu. Confirme os detalhes abaixo para preenchermos os indicadores específicos desta visão.")
+        st.info(f"Aba **{aba_selic}** pronta para receber a implementação na próxima etapa.")
+
+else:
+    st.info(f"Módulo **{menu_lateral}** selecionado. Clique em **◆ Home** ou **● SELIC** para visualizar as telas implementadas.")
