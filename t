@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# CSS CUSTOMIZADO (FIEL AO HTML DAS FOTOS)
+# CSS CUSTOMIZADO (MENU LATERAL CORRIGIDO)
 # ==========================================
 st.markdown("""
 <style>
@@ -31,12 +31,19 @@ st.markdown("""
         max-width: 97% !important;
     }
 
-    /* Barra Lateral Estreita com Logo CM */
+    /* ==========================================
+       MENU LATERAL (CORREÇÃO DE DISTORÇÃO)
+       ================================---------- */
     section[data-testid="stSidebar"] {
         background-color: #060C1A !important;
         border-right: 1px solid #162647 !important;
-        width: 105px !important;
-        min-width: 105px !important;
+        width: 95px !important;
+        min-width: 95px !important;
+    }
+    section[data-testid="stSidebar"] > div:first-child {
+        padding-top: 1.5rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
     .cm-logo {
         width: 44px;
@@ -52,8 +59,53 @@ st.markdown("""
         margin: 0 auto 18px auto;
         box-shadow: 0 0 15px rgba(56, 189, 248, 0.45);
     }
+    /* Estilização do grupo de rádio lateral como botões limpos */
+    section[data-testid="stSidebar"] div[role="radiogroup"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        gap: 6px !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label {
+        background: #0B162C !important;
+        border: 1px solid #1B3159 !important;
+        border-radius: 8px !important;
+        padding: 8px 4px !important;
+        margin: 0 !important;
+        text-align: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {
+        font-size: 0.70rem !important;
+        font-weight: 700 !important;
+        color: #94A3B8 !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+    /* Ocultar o input de rádio nativo */
+    section[data-testid="stSidebar"] div[role="radiogroup"] input[type="radio"] {
+        display: none !important;
+    }
+    /* Estado ativo / selecionado no menu lateral */
+    section[data-testid="stSidebar"] div[role="radiogroup"] label[data-checked="true"] {
+        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%) !important;
+        border-color: #38BDF8 !important;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label[data-checked="true"] div[data-testid="stMarkdownContainer"] p {
+        color: #FFFFFF !important;
+    }
 
-    /* Cabeçalho Superior */
+    /* ==========================================
+       DEMAIS COMPONENTES DO DASHBOARD
+       ================================---------- */
     .top-tag {
         color: #94A3B8;
         font-size: 0.68rem;
@@ -75,8 +127,6 @@ st.markdown("""
         margin-top: 4px;
         margin-bottom: 10px;
     }
-
-    /* Breadcrumb e Status Online */
     .header-bar {
         display: flex;
         justify-content: space-between;
@@ -95,14 +145,6 @@ st.markdown("""
         border: 1px solid rgba(56, 189, 248, 0.45);
         color: #38BDF8;
         font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 5px;
-    }
-    .bc-pill-sub {
-        background: rgba(148, 163, 184, 0.15);
-        border: 1px solid rgba(148, 163, 184, 0.3);
-        color: #E2E8F0;
-        font-weight: 600;
         padding: 2px 10px;
         border-radius: 5px;
     }
@@ -190,7 +232,6 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Títulos de Seção */
     .sec-title {
         font-size: 1.05rem;
         font-weight: 800;
@@ -198,7 +239,6 @@ st.markdown("""
         margin: 22px 0 12px 0;
     }
 
-    /* Cabeçalho de Container de Gráfico */
     .chart-box-header {
         background: #0C172C;
         border: 1px solid #1C315A;
@@ -227,7 +267,7 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* Ranking de Barras Horizontais Customizado (Fiel à Foto 4, 7 e 8) */
+    /* Ranking de Barras Horizontais */
     .rank-card {
         background: #0B1528;
         border: 1px solid #1C315A;
@@ -292,7 +332,7 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* Tabela Inferior (Amostra de Pendências Atual - Top 100) */
+    /* Tabela de Pendências */
     .table-card {
         background: #0B1528;
         border: 1px solid #1C315A;
@@ -333,7 +373,7 @@ st.markdown("""
         display: inline-block;
     }
 
-    /* Ajustes de Widgets Nativos Streamlit */
+    /* Ajustes dos inputs e sub-abas */
     div[data-baseweb="select"] > div,
     div[data-baseweb="input"] > div {
         background-color: #081121 !important;
@@ -349,7 +389,6 @@ st.markdown("""
         text-transform: uppercase !important;
         letter-spacing: 0.5px !important;
     }
-    /* Sub-abas Horizontais estilo Pílula Verde/Teal */
     div[role="radiogroup"] {
         background: #091326;
         padding: 8px 10px;
@@ -489,25 +528,22 @@ def style_plotly(fig: go.Figure, height: int = 300):
 
 
 # ==========================================
-# DADOS SIMULADOS CALIBRADOS COM AS FOTOS
+# DADOS SIMULADOS CALIBRADOS
 # ==========================================
 @st.cache_data
 def load_simulated_data():
     hours = [f"{h:02d}:00" for h in range(8, 22)]
 
-    # 1. Curvas Intraday - Volume Sem Termo (Fotos 2 e 3)
     rec_st_base = [60, 2237, 250, 140, 110, 80, 70, 80, 320, 860, 580, 180, 40, 10]
     rec_st_comp = [55, 2180, 230, 160, 120, 75, 520, 140, 480, 840, 550, 150, 35, 8]
     fin_st_base = [10, 40, 180, 220, 180, 90, 60, 110, 360, 910, 640, 240, 50, 12]
     fin_st_comp = [15, 35, 160, 190, 160, 80, 110, 620, 420, 410, 280, 90, 25, 5]
 
-    # 2. Curvas Intraday - Volume Termo (Foto 3)
     rec_t_base = [30, 860, 220, 25, 10, 8, 5, 12, 18, 20, 15, 10, 140, 20]
     rec_t_comp = [40, 1040, 350, 30, 12, 10, 8, 10, 15, 18, 12, 8, 25, 10]
     fin_t_base = [5, 15, 12, 8, 5, 5, 6, 8, 25, 320, 550, 45, 15, 5]
     fin_t_comp = [5, 18, 14, 10, 6, 6, 8, 10, 40, 450, 580, 50, 20, 8]
 
-    # 3. Curvas Intraday - Leadtime (Fotos 6 e 8)
     lt_tot_base = [110.1, 18.0, 98.0, 76.0, 49.0, 45.0, 34.0, 20.0, 11.0, 9.0, 8.0, 7.0, 11.0, 3.0]
     lt_tot_comp = [92.0, 22.0, 128.0, 71.0, 46.0, 39.0, 33.0, 21.0, 23.0, 14.0, 7.0, 13.0, 8.0, 2.0]
 
@@ -528,7 +564,6 @@ def load_simulated_data():
         "lt_cp_base": lt_cp_base, "lt_cp_comp": lt_cp_comp,
     })
 
-    # Tabela de Pendências (Fotos 4 e 7)
     df_pend = pd.DataFrame([
         {"id_op": "13128567", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 3.331.059,48", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
         {"id_op": "13128568", "gestor": "MIDDLE_ASSET", "origem": "Mercado", "valor": "R$ 848.359,57", "status": "Devolvida pelo usuário", "registro": "2026-09-11 09:00"},
@@ -572,13 +607,12 @@ with st.sidebar:
 
 
 # ==========================================
-# CABEÇALHO SUPERIOR E BARRA DE FILTROS
+# CABEÇALHO SUPERIOR E FILTROS GLOBAIS
 # ==========================================
 st.markdown('<div class="top-tag">INSTITUTIONAL OPERATIONS • AI POWERED</div>', unsafe_allow_html=True)
 st.markdown('<h1 class="page-title">Saúde da Operação</h1>', unsafe_allow_html=True)
 st.markdown('<div class="page-subtitle">Liquidação, risco, eficiência e comportamento operacional em visão executiva.</div>', unsafe_allow_html=True)
 
-# Breadcrumb dinâmico + Status
 if "Home" in menu_lateral:
     bc_html = '<div class="breadcrumb-box"><span>Home</span> <span class="bc-pill">Dashboard</span></div>'
     status_html = '<div class="status-pills"><div class="status-badge"><span class="dot-green"></span> Dados consolidados</div></div>'
@@ -588,7 +622,6 @@ else:
 
 st.markdown(f'<div class="header-bar">{bc_html}{status_html}</div>', unsafe_allow_html=True)
 
-# Filtros Globais (Período Base e Período Comparação lado a lado)
 col_f_base, col_f_comp = st.columns(2)
 with col_f_base:
     with st.container(border=True):
@@ -608,7 +641,7 @@ with col_f_comp:
 
 
 # ==========================================
-# ROTEAMENTO 1: PÁGINA INICIAL (FOTO 1)
+# ROTEAMENTO 1: PÁGINA INICIAL
 # ==========================================
 if "Home" in menu_lateral:
     k1, k2, k3 = st.columns(3)
@@ -628,10 +661,9 @@ if "Home" in menu_lateral:
 
 
 # ==========================================
-# ROTEAMENTO 2: MÓDULO SELIC (FOTOS 2 A 8)
+# ROTEAMENTO 2: MÓDULO SELIC
 # ==========================================
 elif "SELIC" in menu_lateral:
-    # Barra de Exportação CSV / PDF
     _, col_exp1, col_exp2 = st.columns([8.2, 0.9, 0.9])
     col_exp1.download_button(
         "⬇ Exportar CSV",
@@ -642,7 +674,6 @@ elif "SELIC" in menu_lateral:
     )
     col_exp2.button("📄 Gerar PDF", use_container_width=True)
 
-    # Sub-abas Horizontais da SELIC
     aba_selic = st.radio(
         "Abas SELIC",
         options=[
@@ -663,11 +694,7 @@ elif "SELIC" in menu_lateral:
         label_visibility="collapsed"
     )
 
-    # ----------------------------------------------------
-    # VISÃO A: VOLUME DE OPERAÇÕES (FOTOS 2, 3 e 4)
-    # ----------------------------------------------------
     if aba_selic == "Volume de Operações":
-        # Bloco 1: Sem Termo
         st.markdown('<div class="sec-title">Volume de Operações Recepcionadas</div>', unsafe_allow_html=True)
         v1, v2, v3, v4 = st.columns(4)
         with v1:
@@ -729,7 +756,6 @@ elif "SELIC" in menu_lateral:
             ))
         st.plotly_chart(style_plotly(fig_vol_st, height=310), use_container_width=True)
 
-        # Bloco 2: Termo
         st.markdown('<div class="sec-title">Volume de Operações Recepcionadas — Termo</div>', unsafe_allow_html=True)
         t1, t2, t3, t4 = st.columns(4)
         with t1:
@@ -791,7 +817,6 @@ elif "SELIC" in menu_lateral:
             ))
         st.plotly_chart(style_plotly(fig_vol_t, height=300), use_container_width=True)
 
-        # Bloco 3: Visão Consolidada de Recepção e Liquidação (Foto 4)
         st.markdown('<div class="sec-title">Visão Consolidada de Recepção e Liquidação</div>', unsafe_allow_html=True)
         col_rk1, col_rk2 = st.columns(2)
 
@@ -831,14 +856,9 @@ elif "SELIC" in menu_lateral:
                 subtitle="10.373 operações na visão selecionada"
             )
 
-        # Bloco 4: Tabela de Pendências
         render_pendencias_table(df_pend)
 
-    # ----------------------------------------------------
-    # VISÃO B: LEADTIME (SLA) (FOTOS 5, 6, 7 e 8)
-    # ----------------------------------------------------
     elif aba_selic == "Leadtime (SLA)":
-        # Filtro de Modalidade da Operação (Foto 5)
         with st.container(border=True):
             m1, m2, m3 = st.columns([3.5, 1.2, 4])
             m1.multiselect(
@@ -852,7 +872,6 @@ elif "SELIC" in menu_lateral:
                 b_sel1.button("✓ Selecionar Todas", use_container_width=True)
                 b_sel2.button("✕ Limpar Seleção", use_container_width=True)
 
-        # 1. Leadtime Total (Fotos 5 e 6)
         st.markdown('<div class="sec-title">Leadtime Total</div>', unsafe_allow_html=True)
         lt1, lt2, lt3, lt4 = st.columns(4)
         with lt1:
@@ -884,7 +903,6 @@ elif "SELIC" in menu_lateral:
         ))
         st.plotly_chart(style_plotly(fig_lt_tot, height=280), use_container_width=True)
 
-        # 2. Leadtime Itaú (Foto 6)
         st.markdown('<div class="sec-title">Leadtime Itaú</div>', unsafe_allow_html=True)
         li1, li2, li3, li4 = st.columns(4)
         with li1:
@@ -916,7 +934,6 @@ elif "SELIC" in menu_lateral:
         ))
         st.plotly_chart(style_plotly(fig_lt_itau, height=280), use_container_width=True)
 
-        # 3. Leadtime Contraparte (Foto 8)
         st.markdown('<div class="sec-title">Leadtime Contraparte</div>', unsafe_allow_html=True)
         lc1, lc2, lc3, lc4 = st.columns(4)
         with lc1:
@@ -948,7 +965,6 @@ elif "SELIC" in menu_lateral:
         ))
         st.plotly_chart(style_plotly(fig_lt_cp, height=280), use_container_width=True)
 
-        # 4. Origem e Impacto dos Atrasos (Fotos 7 e 8)
         st.markdown('<div class="sec-title">Origem e Impacto dos Atrasos</div>', unsafe_allow_html=True)
         with st.container(border=True):
             st.selectbox("CONTRAPARTE / CORRETORA", ["Todas as contrapartes", "JPMorgan", "BGC", "UBS", "DEUTSCHE"])
@@ -984,11 +1000,10 @@ elif "SELIC" in menu_lateral:
         with col_at2:
             render_horizontal_ranking("Top 10 Corretoras que Mais Atrasam", "LEADTIME MÉDIO", top10_corretoras_atraso, bar_style="amber")
 
-        # 5. Tabela de Pendências
         render_pendencias_table(df_pend)
 
     else:
         st.info(f"Aba **{aba_selic}** pronta para receber a implementação na próxima etapa.")
 
 else:
-    st.info(f"Módulo **{menu_lateral}** selecionado. Clique em **◆ Home** ou **● SELIC** para visualizar as telas implementadas.")
+    st.info(f"Módulo **{menu_lateral}** selecionado.")
