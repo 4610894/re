@@ -12,3 +12,36 @@
   <button class="tab-btn" onclick="openTab('tab-rv-qualidade')">Qualidade &amp; Corte</button>
   <button class="tab-btn" onclick="openTab('tab-rv-ranking')">Ranking Operacional</button>
 </div>
+
+
+
+
+<!-- TAB 2: Financeiro por Horário -->
+<div id="tab-rv-financeiro" class="tab-content"></div>
+
+<!-- TAB 3: Top Gestores -->
+<div id="tab-rv-gestores" class="tab-content"></div>
+
+<!-- TAB 4: Top Corretoras -->
+<div id="tab-rv-corretoras" class="tab-content"></div>
+
+<!-- TAB 5: Leadtime (SLA) -->
+<div id="tab-rv-leadtime" class="tab-content"></div>
+
+<!-- TAB 6: Operações Canceladas & Situações -->
+<div id="tab-rv-canceladas" class="tab-content"></div>
+
+<!-- TAB 7: Natureza & Mercados -->
+<div id="tab-rv-natureza" class="tab-content"></div>
+
+<!-- TAB 8: Heatmap -->
+<div id="tab-rv-heatmap" class="tab-content"></div>
+
+<!-- TAB 9: Clientes & Títulos -->
+<div id="tab-rv-clientes" class="tab-content"></div>
+
+<!-- TAB 10: Qualidade & Corte -->
+<div id="tab-rv-qualidade" class="tab-content"></div>
+
+<!-- TAB 11: Ranking Operacional -->
+<div id="tab-rv-ranking" class="tab-content"></div>
