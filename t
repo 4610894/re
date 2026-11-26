@@ -82,3 +82,15 @@ function sincronizarDatasArea(areaId) {
 
   rvCurrentArea = areaId;
 }
+
+
+
+savedDatesByArea.rv = calcularDatasPadraoRV();
+console.log(
+  `✅ Dados RV carregados: ${rawDataRV.length} boletas`,
+  savedDatesByArea.rv ? `(${savedDatesByArea.rv.min} até ${savedDatesByArea.rv.max})` : ''
+);
+if (rvCurrentArea === 'area-rv') {
+  aplicarDatasFiltrosTopo(savedDatesByArea.rv);
+}
+atualizarDashboardRV();
