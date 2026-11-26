@@ -1,0 +1,60 @@
+@echo off
+setlocal
+
+:: Define o diretorio onde este script esta como diretorio atual (suporta pasta de rede)
+pushd "%~dp0"
+
+set "DESTINO=%USERPROFILE%\Saude_da_Operacao"
+
+echo ==================================================
+echo   Instalando Dashboard - Saude da Operacao
+echo ==================================================
+echo.
+
+if not exist "%DESTINO%" (
+    mkdir "%DESTINO%"
+)
+
+:: Copia os arquivos HTML usando caminho relativo
+echo Copiando arquivos HTML...
+xcopy ".\*.html" "%DESTINO%\" /Y /Q >nul
+if errorlevel 1 (
+    echo [ERRO] Nenhum arquivo .html encontrado na pasta de origem.
+    popd
+    pause
+    exit /b 1
+)
+
+:: Copia a pasta data e todo o seu conteudo usando caminho relativo
+if exist ".\data" (
+    echo Copiando pasta data...
+    xcopy ".\data" "%DESTINO%\data\" /E /I /Y /Q >nul
+) else (
+    echo [AVISO] Pasta "data" nao encontrada na origem.
+)
+
+:: Copia o script de abertura para a pasta local do usuario
+if exist ".\abrir_dashboard.bat" (
+    echo Copiando script de abertura...
+    copy /Y ".\abrir_dashboard.bat" "%DESTINO%\abrir_dashboard.bat" >nul
+) else (
+    echo [ERRO] Arquivo "abrir_dashboard.bat" nao encontrado na pasta de origem.
+    popd
+    pause
+    exit /b 1
+)
+
+popd
+
+echo.
+echo Instalacao concluida com sucesso em:
+echo %DESTINO%
+echo.
+
+:: Questiona se o usuario deseja abrir a pasta local do projeto
+choice /C SN /N /M "Deseja abrir a pasta local do projeto agora? [S/N]: "
+if %errorlevel% equ 1 (
+    explorer "%DESTINO%"
+)
+
+endlocal
